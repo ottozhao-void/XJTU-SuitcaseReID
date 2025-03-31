@@ -2,6 +2,7 @@ from .dukemtmcreid import DukeMTMCreID
 from .market1501 import Market1501
 from .msmt17 import MSMT17
 from .personx import PersonX
+from .suitcaseid import SuitcaseReID
 from .vehicleid import VehicleID
 from .vehiclex import VehicleX
 from .veri import VeRi
@@ -16,6 +17,7 @@ __factory = {
     "veri": VeRi,
     "vehicleid": VehicleID,
     "vehiclex": VehicleX,
+    "suitcaseid": SuitcaseReID,
 }
 
 
