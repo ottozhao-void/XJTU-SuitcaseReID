@@ -1,0 +1,40 @@
+The training is in a un/semi-supervised manner with 1 dataset(s) (['suitcaseid']),
+where [] have no labels.
+[1m=> Loaded trainval from SuitcaseReID[0m
+  ----------------------------
+  # ids | # images | # cameras
+  ----------------------------
+     93 |     2200 |         5
+  ----------------------------
+[1m=> Loaded the Joint Training Dataset[0m
+  ----------------------------
+  # ids | # images | # cameras
+  ----------------------------
+     93 |     2200 |         5
+  ----------------------------
+The training is in a un/semi-supervised manner with 1 dataset(s) (['suitcaseid']),
+where [] have no labels.
+[1m=> Loaded trainval from SuitcaseReID[0m
+  ----------------------------
+  # ids | # images | # cameras
+  ----------------------------
+     93 |     2200 |         5
+  ----------------------------
+[1m=> Loaded the Joint Training Dataset[0m
+  ----------------------------
+  # ids | # images | # cameras
+  ----------------------------
+     93 |     2200 |         5
+  ----------------------------
+[1m=> Loaded query from SuitcaseReID[0m
+  ----------------------------
+  # ids | # images | # cameras
+  ----------------------------
+     24 |       24 |         4
+  ----------------------------
+[1m=> Loaded gallery from SuitcaseReID[0m
+  ----------------------------
+  # ids | # images | # cameras
+  ----------------------------
+     19 |       56 |         4
+  ----------------------------

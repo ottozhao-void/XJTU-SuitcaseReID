@@ -1,10 +1,12 @@
-# Written for single-camera unlabeled suitcase dataset
+#!/usr/bin/env python
+"""
+Dataset class for SuitcaseReID - Modified for supervised training
+"""
 
 import glob
 import os.path as osp
 import re
 import warnings
-import random
 import numpy as np
 from collections import defaultdict
 
@@ -13,16 +15,16 @@ from ..utils.base_dataset import ImageDataset
 
 class SuitcaseReID(ImageDataset):
     """SuitcaseReID.
-    A custom dataset for suitcase re-identification with single camera view.
+    A dataset for suitcase re-identification with labeled data.
     
     Dataset structure:
-    - Suitcase-ReID/
+    - SuitcaseReID_Processed/
         - bounding_box_train/
         - bounding_box_test/
         - query/
     """
 
-    dataset_dir = "Suitcase-ReID"  # Your dataset directory name
+    dataset_dir = "SuitcaseReID_Processed"
 
     def __init__(self, root, mode, val_split=0.2, del_labels=False, pseudo_labels=None, **kwargs):
         self.root = osp.abspath(osp.expanduser(root))
@@ -79,13 +81,61 @@ class SuitcaseReID(ImageDataset):
         
         # For train/val split
         total_imgs = len(img_paths)
+        if total_imgs == 0:
+            raise RuntimeError(f"Found 0 images in directory: {dir_path}. Please check if the dataset path is correct.")
+            
         start_idx = int(round(total_imgs * data_range[0]))
         end_idx = int(round(total_imgs * data_range[1]))
         img_paths = img_paths[start_idx:end_idx]
         
+        # Try multiple pattern matching strategies for flexibility
+        # 1. For filenames like "0001_c1s1_000123_01.jpg" (Market-1501 style)
+        market_pattern = re.compile(r'([-\d]+)_')
+        
+        # 2. For filenames like "0010_p_3_0.jpg" (SuitcaseReID style)
+        suitcase_pattern = re.compile(r'(\d+)_p_(\d+)_\d+\.jpg')
+        
+        # Extract person IDs from filenames
+        pid_container = set()
+        for img_path in img_paths:
+            filename = osp.basename(img_path)
+            
+            # Try SuitcaseReID pattern first
+            pid_match = suitcase_pattern.search(filename)
+            if pid_match:
+                pid = int(pid_match.group(1))
+                pid_container.add(pid)
+                continue
+                
+            # Fall back to Market-1501 pattern
+            pid_match = market_pattern.search(filename)
+            if pid_match:
+                pid = int(pid_match.group(1))
+                pid_container.add(pid)
+                continue
+                
+            # If no pattern matches, use a simple approach: just use the first numbers in the filename
+            numbers = re.findall(r'\d+', filename)
+            if numbers:
+                pid = int(numbers[0])
+                pid_container.add(pid)
+        
+        if len(pid_container) == 0:
+            warnings.warn(f"No valid person IDs found in {dir_path}. Using sequential IDs instead.")
+            # Assign sequential IDs if no proper IDs found
+            data = []
+            for i, img_path in enumerate(img_paths):
+                pid = i // 4  # Assuming 4 images per ID on average
+                camid = 0
+                data.append((img_path, pid, camid))
+            return data
+                
+        pid_container = sorted(pid_container)
+        pid2label = {pid: label for label, pid in enumerate(pid_container)}
+        
         data = []
         
-        # Check if we have pseudo labels (from clustering)
+        # Check if we're using pseudo labels from clustering (for semi-supervised)
         if self.pseudo_labels is not None:
             # Process with cluster-based pseudo-labels
             for i, (img_path, label) in enumerate(zip(img_paths, self.pseudo_labels)):
@@ -94,44 +144,69 @@ class SuitcaseReID(ImageDataset):
                     if not self.mode.startswith('train'):
                         continue  # Skip outliers for validation
                     pid = len(img_paths) + i  # Give outliers unique IDs
-                camid = 0  # Single camera
+                camid = 0  # Default camera ID
                 data.append((img_path, pid, camid))
         else:
-            if self.mode.startswith('train') and not self.del_labels:
-                # For initial training without clusters, create artificial diversity
-                # Group images by filename patterns to create initial "classes"
-                pattern_groups = defaultdict(list)
-                for img_path in img_paths:
-                    # Extract patterns from filenames like "suitcase0-3404_suitcase_1000_0.jpg"
-                    filename = osp.basename(img_path)
-                    # Use the middle part as a rough grouping (e.g., "1000" from "suitcase_1000_0")
-                    pattern = filename.split('_')[1] if len(filename.split('_')) > 1 else 'default'
-                    pattern_groups[pattern].append(img_path)
+            # Process with real labels from filenames
+            for img_path in img_paths:
+                filename = osp.basename(img_path)
                 
-                # Now create data with these pattern-based groups
-                pid_container = sorted(pattern_groups.keys())
-                pid2label = {pid: label for label, pid in enumerate(pid_container)}
+                # Try SuitcaseReID pattern first (e.g. 0010_p_3_0.jpg)
+                pid_match = suitcase_pattern.search(filename)
+                if pid_match:
+                    pid = int(pid_match.group(1))
+                    view = int(pid_match.group(2))  # Use view ID as camera ID
+                    
+                    if self.del_labels:
+                        pid = 0
+                    else:
+                        if relabel:
+                            pid = pid2label[pid]
+                    
+                    data.append((img_path, pid, view))
+                    continue
                 
-                for pattern, paths in pattern_groups.items():
-                    for img_path in paths:
-                        if self.del_labels:
-                            pid = 0
-                        else:
-                            pid = pid2label[pattern]
-                        camid = 0
-                        data.append((img_path, pid, camid))
-            else:
-                # For validation/testing or when del_labels is True
-                for i, img_path in enumerate(img_paths):
-                    pid = i if not self.del_labels else 0
-                    camid = 0
+                # Try Market-1501 pattern
+                pid_match = market_pattern.search(filename)
+                if pid_match:
+                    pid = int(pid_match.group(1))
+                    
+                    if self.del_labels:
+                        pid = 0
+                    else:
+                        if relabel:
+                            pid = pid2label[pid]
+                            
+                    # Extract camera ID if present, otherwise default to 0
+                    cam_match = re.search(r'c(\d+)', filename)
+                    camid = int(cam_match.group(1)) - 1 if cam_match else 0
+                    
                     data.append((img_path, pid, camid))
+                    continue
+                    
+                # If no pattern matches, use simple approach
+                numbers = re.findall(r'\d+', filename)
+                if numbers:
+                    pid = int(numbers[0])
+                    if self.del_labels:
+                        pid = 0
+                    else:
+                        if pid in pid2label:  # Make sure the pid exists in our mapping
+                            if relabel:
+                                pid = pid2label[pid]
+                        else:
+                            warnings.warn(f"ID {pid} from {filename} not found in ID container. Using as-is.")
+                    
+                    camid = 0  # Default camera ID
+                    data.append((img_path, pid, camid))
+                else:
+                    warnings.warn(f'No person ID could be extracted from {filename}, skipping.')
         
         return data
         
     def renew_labels(self, pseudo_labels):
         """Renew labels for the dataset with clustering results."""
-        # This method is called after each clustering iteration
+        # This method is called after each clustering iteration in semi-supervised learning
         self.pseudo_labels = pseudo_labels
         
         # Re-process the data with new labels

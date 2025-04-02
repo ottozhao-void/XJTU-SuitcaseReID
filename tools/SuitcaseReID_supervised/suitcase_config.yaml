@@ -1,0 +1,110 @@
+DATA_ROOT: "../../datasets/"
+LOGS_ROOT: "../../logs/suitcase_supervised/"
+total_gpus: 1 # Set this to the number of GPUs you want to use
+
+MODEL:
+  # Architecture
+  backbone: "resnet50"
+  pooling: "gem" # Global average pooling works well for suitcase features
+  embed_feat: 0 # Use the output of the backbone directly
+  dropout: 0.3 # Added some dropout to prevent overfitting on small dataset
+
+  dsbn: False # Single-source training, so no domain-specific batch norm needed
+  sync_bn: False
+  samples_per_bn: 16
+
+  mean_net: False
+  alpha: 0.999
+
+  # Pretraining
+  imagenet_pretrained: True
+  source_pretrained: null
+
+DATA:
+  height: 256
+  width: 256 # Square shape for suitcases (unlike people which are taller than wide)
+  norm_mean: [0.485, 0.456, 0.406]
+  norm_std: [0.229, 0.224, 0.225]
+
+  TRAIN:
+    # Augmentation - stronger augmentation for smaller dataset
+    is_autoaug: True # Using AutoAugment for more data diversity
+
+    is_flip: True
+    flip_prob: 0.5
+
+    is_pad: True
+    pad_size: 10
+
+    is_blur: True # Added blur to increase data diversity
+    blur_prob: 0.3
+
+    is_erase: True
+    erase_prob: 0.7 # Increased erase probability for more diversity
+
+    # Dual augmentation for MMT
+    is_mutual_transform: False
+    mutual_times: 1
+
+TRAIN:
+  seed: 1
+  deterministic: True
+  # Mixed precision training for PyTorch>=1.6
+  amp: False # Disabled mixed precision due to compatibility issue with DataParallel
+
+  # Datasets - set to SuitcaseReID
+  datasets: { "suitcaseid": "train" }
+  unsup_dataset_indexes: [] # Supervised training, so no unsupervised datasets
+
+  epochs: 100 # More epochs for smaller dataset
+  iters: 200 # Fewer iterations per epoch for smaller dataset
+
+  LOSS:
+    losses: { "cross_entropy": 1., "softmax_triplet": 1. }
+    margin: 0.3 # Added margin to triplet loss for better separation
+
+  # Validate
+  val_dataset: "suitcaseid"
+  val_freq: 5
+
+  # Sampler
+  SAMPLER:
+    num_instances: 4 # Sample 4 instances per ID
+    is_shuffle: True
+
+  # Data loader
+  LOADER:
+    samples_per_gpu: 32 # Increased batch size for faster training
+    workers_per_gpu: 4 # More workers for faster data loading
+
+  # Optimizer
+  OPTIM:
+    optim: "adam"
+    lr: 0.0003
+    weight_decay: 0.0005
+
+  SCHEDULER:
+    lr_scheduler: "cosine" # Using cosine scheduler for better convergence
+    gamma: 0.1
+    stepsize: [30, 60, 90]
+
+TEST:
+  # Datasets
+  datasets: ["suitcaseid"]
+
+  # Data loader
+  LOADER:
+    samples_per_gpu: 64
+    workers_per_gpu: 4
+
+  # Ranking setting
+  dist_metric: "euclidean"
+  norm_feat: True
+  dist_cuda: True
+
+  # Post processing
+  rerank: True # Using re-ranking for better results
+  search_type: 0 # GPU search
+  k1: 20
+  k2: 6
+  lambda_value: 0.3
