@@ -97,56 +97,68 @@ def eval_market1501(distmat, q_pids, g_pids, q_camids, g_camids, max_rank):
     Key: for each query identity, its gallery images from the same camera view are
         discarded.
     """
+    # Initialize basic parameters: number of queries and gallery images
     num_q, num_g = distmat.shape
 
+    # Adjust max_rank if gallery size is smaller than requested rank
     if num_g < max_rank:
         max_rank = num_g
         print("Note: number of gallery samples is quite small, got {}".format(num_g))
 
+    # Sort gallery images by distance for each query and create binary match matrix
+    # Lower distance = better match; matches[i,j]=1 means same identity
     indices = np.argsort(distmat, axis=1)
     matches = (g_pids[indices] == q_pids[:, np.newaxis]).astype(np.int32)
 
-    # compute cmc curve for each query
+    # Initialize containers for CMC and AP metrics across all queries
     all_cmc = []
     all_AP = []
     num_valid_q = 0.0  # number of valid query
 
+    # Process each query individually
     for q_idx in range(num_q):
-        # get query pid and camid
+        # Get query person ID and camera ID
         q_pid = q_pids[q_idx]
         q_camid = q_camids[q_idx]
 
-        # remove gallery samples that have the same pid and camid with query
+        # Cross-camera validation: remove gallery images with same ID and camera
+        # as the query image (would be trivial matches)
         order = indices[q_idx]
         remove = (g_pids[order] == q_pid) & (g_camids[order] == q_camid)
         keep = np.invert(remove)
 
-        # compute cmc curve
-        raw_cmc = matches[q_idx][
-            keep
-        ]  # binary vector, positions with value 1 are correct matches
+        # Create binary match vector for this query (after filtering)
+        raw_cmc = matches[q_idx][keep]
+        
+        # Skip queries that have no matches in the gallery
         if not np.any(raw_cmc):
-            # this condition is true when query identity does not appear in gallery
             continue
 
+        # Compute CMC curve: cumulative number of matches up to each rank
+        # Normalized to maximum value of 1 (found at least one match)
         cmc = raw_cmc.cumsum()
         cmc[cmc > 1] = 1
 
+        # Add this query's CMC curve to the overall results
         all_cmc.append(cmc[:max_rank])
         num_valid_q += 1.0
 
-        # compute average precision
+        # Compute Average Precision for this query
+        # AP = sum(precision@k * relevance@k) / number_of_relevant_items
         num_rel = raw_cmc.sum()
         tmp_cmc = raw_cmc.cumsum()
-        tmp_cmc = [x / (i + 1.0) for i, x in enumerate(tmp_cmc)]
-        tmp_cmc = np.asarray(tmp_cmc) * raw_cmc
+        tmp_cmc = [x / (i + 1.0) for i, x in enumerate(tmp_cmc)]  # precision at each position
+        tmp_cmc = np.asarray(tmp_cmc) * raw_cmc  # precision × relevance
         AP = tmp_cmc.sum() / num_rel
         all_AP.append(AP)
 
+    # Verify that at least one query was valid
     assert num_valid_q > 0, "Error: all query identities do not appear in gallery"
 
+    # Calculate final metrics by averaging across all valid queries
+    # Mean CMC curve and mean Average Precision (mAP)
     all_cmc = np.asarray(all_cmc).astype(np.float32)
-    all_cmc = all_cmc.sum(0) / num_valid_q
+    all_cmc = all_cmc.sum(0) / num_valid_q # all_cmc 的每个位置 `i` 是CMC@i 的平均值，之所以用 .cumsum() 是因为只要确保前 i 个位置有一个匹配成功即可
     mAP = np.mean(all_AP)
 
     return all_cmc, mAP
@@ -169,7 +181,7 @@ def evaluate_rank(
     g_camids,
     max_rank=50,
     use_metric_cuhk03=False,
-    use_cython=True,
+    use_cython=False,
     cmc_topk=(1, 5, 10),
     verbose=True,
 ):

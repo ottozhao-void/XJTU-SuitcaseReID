@@ -80,6 +80,19 @@ def parse_config():
 
 
 def main():
+
+    # CUDA_VISIBLE_DEVICE=0,1,2,3 python -m torch.distributed.launch --nproc_per_node=4 /data1/zhaofanghan/OpenUnReID/tools/SuitcaseReID_supervised/strong_baseline_suitcase.py --config /data1/zhaofanghan/OpenUnReID/tools/SuitcaseReID_supervised/suitcase_config.yaml --launcher pytorch
+    
+    # torchrun version: 
+    # Use torchrun instead of torch.distributed.launch, becuase it sets the local rank in environemt variable
+    # not automatically inject --local_rank
+    
+    # CUDA_VISIBLE_DEVICES=0,1,2,3 torchrun \
+    # --nproc_per_node=4 \
+    # /data1/zhaofanghan/OpenUnReID/tools/SuitcaseReID_supervised/strong_baseline_suitcase.py \
+    # --config /data1/zhaofanghan/OpenUnReID/tools/SuitcaseReID_supervised/suitcase_config.yaml \
+    # --launcher pytorch
+
     start_time = time.monotonic()
 
     # Init configuration
@@ -133,8 +146,7 @@ def main():
         model = torch.nn.parallel.DistributedDataParallel(
             model,
             device_ids=[cfg.gpu],
-            output_device=cfg.gpu,
-            find_unused_parameters=True,
+            output_device=cfg.gpu
         )
     elif cfg.total_gpus > 1:
         model = torch.nn.DataParallel(model)

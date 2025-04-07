@@ -9,11 +9,11 @@ from ...utils.dist_utils import all_gather_tensor
 
 try:
     # PyTorch >= 1.6 supports mixed precision training
-    from torch.cuda.amp import custom_fwd, custom_bwd
+    from torch.amp import custom_fwd, custom_bwd
     class HM(autograd.Function):
 
         @staticmethod
-        @custom_fwd(cast_inputs=torch.float32)
+        @custom_fwd(cast_inputs=torch.float32, device_type='cuda')
         def forward(ctx, inputs, indexes, features, momentum):
             ctx.features = features
             ctx.momentum = momentum
@@ -24,7 +24,7 @@ try:
             return outputs
 
         @staticmethod
-        @custom_bwd
+        @custom_bwd(device_type='cuda')
         def backward(ctx, grad_outputs):
             inputs, indexes = ctx.saved_tensors
             grad_inputs = None

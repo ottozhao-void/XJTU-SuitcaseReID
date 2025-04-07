@@ -213,7 +213,7 @@ class BaseRunner(object):
 
         end = time.time()
         for iter in range(self.cfg.TRAIN.iters):
-
+            # TODO: to verify the batch size
             if isinstance(self.train_loader, list):
                 batch = [loader.next() for loader in self.train_loader]
             else:

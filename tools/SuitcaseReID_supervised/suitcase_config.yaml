@@ -1,6 +1,6 @@
-DATA_ROOT: "../../datasets/"
-LOGS_ROOT: "../../logs/suitcase_supervised/"
-total_gpus: 1 # Set this to the number of GPUs you want to use
+DATA_ROOT: "/data1/zhaofanghan/OpenUnReID/datasets"
+LOGS_ROOT: "/data1/zhaofanghan/OpenUnReID/logs/"
+total_gpus: 4 # Set this to the number of GPUs you want to use
 
 MODEL:
   # Architecture
@@ -56,8 +56,8 @@ TRAIN:
   datasets: { "suitcaseid": "train" }
   unsup_dataset_indexes: [] # Supervised training, so no unsupervised datasets
 
-  epochs: 100 # More epochs for smaller dataset
-  iters: 200 # Fewer iterations per epoch for smaller dataset
+  epochs: 50 # More epochs for smaller dataset
+  iters: 100 # Fewer iterations per epoch for smaller dataset
 
   LOSS:
     losses: { "cross_entropy": 1., "softmax_triplet": 1. }

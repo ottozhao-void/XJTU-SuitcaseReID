@@ -113,39 +113,67 @@ def test_reid(
 def val_reid(
     cfg, model, data_loader, val, epoch=0, dataset_name=None, rank=None, **kwargs
 ):
+    """
+    Evaluate a model on a ReID validation set.
 
+    This function performs validation for Re-Identification (ReID) tasks by extracting features
+    from the validation dataset, computing distances between features, and evaluating using
+    rank-based metrics (CMC and mAP).
+
+    Args:
+        cfg (object): Configuration object containing test settings.
+        model (nn.Module): The model to evaluate.
+        data_loader (DataLoader): DataLoader for the validation dataset.
+        val (list): Validation dataset containing tuples of (path, pid, cid).
+        epoch (int, optional): Current epoch number for logging. Defaults to 0.
+        dataset_name (str, optional): Name of the dataset for logging. Defaults to None.
+        rank (int, optional): Process rank for distributed training. Defaults to None.
+        **kwargs: Additional arguments to pass to the feature extraction function.
+
+    Returns:
+        tuple: A tuple containing:
+            - cmc (numpy.ndarray): Cumulative Matching Characteristics results.
+            - map (float): Mean Average Precision.
+    """
+    # Initialize timing for performance measurement
     start_time = time.monotonic()
 
+    # Print validation start message with dataset name and epoch
     sep = "*************************"
     if dataset_name is not None:
         print(f"\n{sep} Start validating {dataset_name} on epoch {epoch} {sep}n")
 
+    # Get rank for distributed training
     if rank is None:
         rank, _, _ = get_dist_info()
 
-    # parse ground-truth IDs and camera IDs
+    # Extract ground-truth person IDs and camera IDs from validation set
     pids = np.array([pid for _, pid, _ in val])
     cids = np.array([cid for _, _, cid in val])
 
-    # extract features with the given model
+    # Extract features from images using the model
+    # This is the most compute-intensive part of validation
     features = extract_features(
         model,
         data_loader,
         val,
         normalize=cfg.TEST.norm_feat,
         with_path=False,
-        # one_gpu = one_gpu,
         prefix="Val: ",
         **kwargs,
     )
 
-    # evaluate with original distance
+    # Calculate distance matrix and evaluate metrics (only on rank 0 for distributed training)
     if rank == 0:
+        # Build distance matrix between all validation samples
         dist = build_dist(cfg.TEST, features)
+        # Calculate CMC and mAP metrics using the distance matrix
         cmc, map = evaluate_rank(dist, pids, pids, cids, cids)
     else:
+        # For other ranks in distributed training, just create empty placeholders
         cmc, map = np.empty(50), 0.0
 
+    # Log timing information and print validation end message
     end_time = time.monotonic()
     print("Validating time: ", timedelta(seconds=end_time - start_time))
     print(f"\n{sep} Finished validating {sep}\n")
