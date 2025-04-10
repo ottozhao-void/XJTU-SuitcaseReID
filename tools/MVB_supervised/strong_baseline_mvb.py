@@ -7,6 +7,9 @@ Modified from strong_baseline/main.py
 import argparse
 import shutil
 import sys
+
+sys.path.append("/data1/zhaofanghan/SuitcaseReID/OpenUnReID")
+
 import time
 from datetime import timedelta
 from pathlib import Path
@@ -36,7 +39,7 @@ def parse_config():
     parser.add_argument("--config", help="train config file path", 
                         default=osp.join(osp.dirname(__file__), 'config.yaml'))
     parser.add_argument(
-        "--work-dir", help="the dir to save logs and models", default="suitcase_supervised"
+        "--work-dir", help="the dir to save logs and models"
     )
     parser.add_argument("--resume-from", help="the checkpoint file to resume from")
     parser.add_argument(
@@ -62,12 +65,16 @@ def parse_config():
     
     # Use a specific work directory for SuitcaseReID
     if not args.work_dir:
-        args.work_dir = "suitcase_supervised"
+        # 获取当前时间
+        current_time = time.strftime("%Y-%m-%d_%H-%M-%S", time.localtime())
+        # 设置工作目录
+        args.work_dir = "suitcase_supervised_mvb_" + current_time
     
     if cfg.LOGS_ROOT is not None:
         cfg.work_dir = Path(cfg.LOGS_ROOT) / args.work_dir
     else:
         cfg.work_dir = Path("../logs") / args.work_dir
+
     mkdir_if_missing(cfg.work_dir)
     
     if args.set_cfgs is not None:

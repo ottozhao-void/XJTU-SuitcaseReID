@@ -1,0 +1,57 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 820 500">
+  
+  <!-- Table Header -->
+  <rect x="120" y="70" width="160" height="50" fill="#4b6cb7" rx="5" ry="5" />
+  <rect x="280" y="70" width="180" height="50" fill="#4b6cb7" rx="5" ry="5" />
+  <rect x="460" y="70" width="180" height="50" fill="#4b6cb7" rx="5" ry="5" />
+  
+  <text x="200" y="102" font-family="Arial, sans-serif" font-size="18" font-weight="bold" text-anchor="middle" fill="white">指标</text>
+  <text x="370" y="102" font-family="Arial, sans-serif" font-size="18" font-weight="bold" text-anchor="middle" fill="white">训练集</text>
+  <text x="550" y="102" font-family="Arial, sans-serif" font-size="18" font-weight="bold" text-anchor="middle" fill="white">测试集</text>
+  
+  <!-- Table Rows -->
+  <!-- Row 1 -->
+  <rect x="120" y="120" width="160" height="50" fill="#f5f7fa" rx="5" ry="5" stroke="#e6e9ef" stroke-width="1" />
+  <rect x="280" y="120" width="180" height="50" fill="#f5f7fa" rx="5" ry="5" stroke="#e6e9ef" stroke-width="1" />
+  <rect x="460" y="120" width="180" height="50" fill="#f5f7fa" rx="5" ry="5" stroke="#e6e9ef" stroke-width="1" />
+  
+  <text x="200" y="152" font-family="Arial, sans-serif" font-size="16" text-anchor="middle" fill="#333333">行李箱ID数量</text>
+  <text x="370" y="152" font-family="Arial, sans-serif" font-size="16" text-anchor="middle" fill="#333333">4019</text>
+  <text x="550" y="152" font-family="Arial, sans-serif" font-size="16" text-anchor="middle" fill="#333333">500</text>
+  
+  <!-- Row 2 -->
+  <rect x="120" y="170" width="160" height="50" fill="#eef2f7" rx="5" ry="5" stroke="#e6e9ef" stroke-width="1" />
+  <rect x="280" y="170" width="180" height="50" fill="#eef2f7" rx="5" ry="5" stroke="#e6e9ef" stroke-width="1" />
+  <rect x="460" y="170" width="180" height="50" fill="#eef2f7" rx="5" ry="5" stroke="#e6e9ef" stroke-width="1" />
+  
+  <text x="200" y="202" font-family="Arial, sans-serif" font-size="16" text-anchor="middle" fill="#333333">总图像数</text>
+  <text x="370" y="202" font-family="Arial, sans-serif" font-size="16" text-anchor="middle" fill="#333333">20176</text>
+  <text x="550" y="202" font-family="Arial, sans-serif" font-size="16" text-anchor="middle" fill="#333333">2484</text>
+  
+  <!-- Row 3 -->
+  <rect x="120" y="220" width="160" height="50" fill="#f5f7fa" rx="5" ry="5" stroke="#e6e9ef" stroke-width="1" />
+  <rect x="280" y="220" width="180" height="50" fill="#f5f7fa" rx="5" ry="5" stroke="#e6e9ef" stroke-width="1" />
+  <rect x="460" y="220" width="180" height="50" fill="#f5f7fa" rx="5" ry="5" stroke="#e6e9ef" stroke-width="1" />
+  
+  <text x="200" y="252" font-family="Arial, sans-serif" font-size="16" text-anchor="middle" fill="#333333">安检前图像数</text>
+  <text x="370" y="252" font-family="Arial, sans-serif" font-size="16" text-anchor="middle" fill="#333333">11596</text>
+  <text x="550" y="252" font-family="Arial, sans-serif" font-size="16" text-anchor="middle" fill="#333333">1432</text>
+  
+  <!-- Row 4 -->
+  <rect x="120" y="270" width="160" height="50" fill="#eef2f7" rx="5" ry="5" stroke="#e6e9ef" stroke-width="1" />
+  <rect x="280" y="270" width="180" height="50" fill="#eef2f7" rx="5" ry="5" stroke="#e6e9ef" stroke-width="1" />
+  <rect x="460" y="270" width="180" height="50" fill="#eef2f7" rx="5" ry="5" stroke="#e6e9ef" stroke-width="1" />
+  
+  <text x="200" y="302" font-family="Arial, sans-serif" font-size="16" text-anchor="middle" fill="#333333">安检后图像数</text>
+  <text x="370" y="302" font-family="Arial, sans-serif" font-size="16" text-anchor="middle" fill="#333333">8580</text>
+  <text x="550" y="302" font-family="Arial, sans-serif" font-size="16" text-anchor="middle" fill="#333333">1052</text>
+  
+  <!-- Row 5 -->
+  <rect x="120" y="320" width="160" height="50" fill="#f5f7fa" rx="5" ry="5" stroke="#e6e9ef" stroke-width="1" />
+  <rect x="280" y="320" width="180" height="50" fill="#f5f7fa" rx="5" ry="5" stroke="#e6e9ef" stroke-width="1" />
+  <rect x="460" y="320" width="180" height="50" fill="#f5f7fa" rx="5" ry="5" stroke="#e6e9ef" stroke-width="1" />
+  
+  <text x="200" y="352" font-family="Arial, sans-serif" font-size="16" text-anchor="middle" fill="#333333">每ID平均图像数</text>
+  <text x="370" y="352" font-family="Arial, sans-serif" font-size="16" text-anchor="middle" fill="#333333">5.02</text>
+  <text x="550" y="352" font-family="Arial, sans-serif" font-size="16" text-anchor="middle" fill="#333333">4.97</text>
+</svg>

@@ -55,8 +55,8 @@ TRAIN:
   datasets: { "mvb": "train" }
   unsup_dataset_indexes: [] # Supervised training, so no unsupervised datasets
 
-  epochs: 50 # More epochs for smaller dataset
-  iters: 100 # Fewer iterations per epoch for smaller dataset
+  epochs: 100 # More epochs for smaller dataset
+  iters: 200 # Fewer iterations per epoch for smaller dataset
 
   LOSS:
     losses: { "cross_entropy": 1., "softmax_triplet": 1. }
@@ -64,7 +64,7 @@ TRAIN:
 
   # Validate
   val_dataset: "mvb"
-  val_freq: 5
+  val_freq: 20
 
   # Sampler
   SAMPLER:
