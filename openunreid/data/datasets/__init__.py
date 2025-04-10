@@ -6,6 +6,7 @@ from .suitcaseid import SuitcaseReID
 from .vehicleid import VehicleID
 from .vehiclex import VehicleX
 from .veri import VeRi
+from .mvb import MVB
 
 __all__ = ["build_dataset", "names"]
 
@@ -18,6 +19,7 @@ __factory = {
     "vehicleid": VehicleID,
     "vehiclex": VehicleX,
     "suitcaseid": SuitcaseReID,
+    "mvb": MVB
 }
 
 

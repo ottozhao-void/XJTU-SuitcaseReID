@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 """
-Dataset class for SuitcaseReID - Modified for supervised training
+Dataset class for MVB - Modified for supervised training
 """
 
 import glob
@@ -13,9 +13,9 @@ from collections import defaultdict
 from ..utils.base_dataset import ImageDataset
 
 
-class SuitcaseReID(ImageDataset):
-    """SuitcaseReID.
-    A dataset for suitcase re-identification with labeled data.
+class MVB(ImageDataset):
+    """MVB.
+    A dataset for MVB suitcase re-identification with labeled data.
     
     Dataset structure:
     - MVB/
@@ -71,7 +71,7 @@ class SuitcaseReID(ImageDataset):
 
         self.mode = mode
         data = self.process_dir(*cfgs)
-        super(SuitcaseReID, self).__init__(data, mode, **kwargs)
+        super(MVB, self).__init__(data, mode, **kwargs)
 
     def process_dir(self, dir_path, data_range, relabel=False):
         img_paths = glob.glob(osp.join(dir_path, "*.jpg"))
@@ -92,7 +92,7 @@ class SuitcaseReID(ImageDataset):
         # 1. For filenames like "0001_c1s1_000123_01.jpg" (Market-1501 style)
         market_pattern = re.compile(r'([-\d]+)_')
         
-        # 2. For filenames like "0010_p_3_0.jpg" (SuitcaseReID style)
+        # 2. For filenames like "0010_p_3_0.jpg" (MVB style)
         suitcase_pattern = re.compile(r'(\d+)_[pg]_(\d+)\.jpg')
         
         # Extract person IDs from filenames
@@ -100,7 +100,7 @@ class SuitcaseReID(ImageDataset):
         for img_path in img_paths:
             filename = osp.basename(img_path)
             
-            # Try SuitcaseReID pattern first
+            # Try MVB pattern first
             pid_match = suitcase_pattern.search(filename)
             if pid_match:
                 pid = int(pid_match.group(1))
@@ -151,7 +151,7 @@ class SuitcaseReID(ImageDataset):
             for img_path in img_paths:
                 filename = osp.basename(img_path)
                 
-                # Try SuitcaseReID pattern first (e.g. 0010_p_3_0.jpg)
+                # Try MVB pattern first (e.g. 0010_p_3_0.jpg)
                 pid_match = suitcase_pattern.search(filename)
                 if pid_match:
                     pid = int(pid_match.group(1))
