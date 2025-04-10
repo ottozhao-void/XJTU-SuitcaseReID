@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg width="800" height="600" viewBox="0 0 800 600" xmlns="http://www.w3.org/2000/svg">
+    <!-- Background -->
+    <rect width="800" height="600" fill="#fdf7e2"/>
+
+    <!-- Feature Extraction Network -->
+    <rect x="50" y="100" width="400" height="200" fill="#b3e5fc" stroke="#0288d1" stroke-width="2" rx="10" ry="10"/>
+    <text x="250" y="140" font-family="Arial" font-size="20" font-weight="bold" text-anchor="middle" fill="#01579b">特征提取网络</text>
+
+    <!-- ResNet50 -->
+    <rect x="80" y="160" width="120" height="80" fill="#ffcc80" stroke="#fb8c00" stroke-width="2" rx="5" ry="5"/>
+    <text x="140" y="200" font-family="Arial" font-size="16" font-weight="bold" text-anchor="middle" fill="#e65100">ResNet50</text>
+
+    <!-- Arrow -->
+    <line x1="200" y1="200" x2="260" y2="200" stroke="#0288d1" stroke-width="2" marker-end="url(#arrowhead)"/>
+
+    <!-- GeM Pooling -->
+    <rect x="260" y="160" width="120" height="80" fill="#c8e6c9" stroke="#388e3c" stroke-width="2" rx="5" ry="5"/>
+    <text x="320" y="200" font-family="Arial" font-size="16" font-weight="bold" text-anchor="middle" fill="#1b5e20">GeM Pooling</text>
+
+    <!-- Arrow -->
+    <line x1="380" y1="200" x2="450" y2="200" stroke="#0288d1" stroke-width="2" marker-end="url(#arrowhead)"/>
+
+    <!-- Feature Vector -->
+    <rect x="450" y="160" width="120" height="80" fill="#ffe082" stroke="#fbc02d" stroke-width="2" rx="5" ry="5"/>
+    <text x="510" y="200" font-family="Arial" font-size="16" font-weight="bold" text-anchor="middle" fill="#f57f17">特征向量</text>
+
+    <!-- Downward Arrow -->
+    <line x1="510" y1="240" x2="510" y2="300" stroke="#0288d1" stroke-width="2" marker-end="url(#arrowhead)"/>
+
+    <!-- Classification Head -->
+    <rect x="350" y="300" width="120" height="80" fill="#90caf9" stroke="#1976d2" stroke-width="2" rx="5" ry="5"/>
+    <text x="410" y="340" font-family="Arial" font-size="16" font-weight="bold" text-anchor="middle" fill="#0d47a1">分类头</text>
+
+    <!-- Contrastive Learning Head -->
+    <rect x="470" y="300" width="120" height="80" fill="#f8bbd0" stroke="#d81b60" stroke-width="2" rx="5" ry="5"/>
+    <text x="530" y="340" font-family="Arial" font-size="16" font-weight="bold" text-anchor="middle" fill="#880e4f">对比学习头</text>
+
+    <!-- Horizontal Arrow -->
+    <line x1="510" y1="300" x2="410" y2="300" stroke="#0288d1" stroke-width="2" marker-end="url(#arrowhead)"/>
+    <line x1="510" y1="300" x2="610" y2="300" stroke="#0288d1" stroke-width="2" marker-end="url(#arrowhead)"/>
+
+    <!-- Arrowhead Marker -->
+    <defs>
+        <marker id="arrowhead" markerWidth="10" markerHeight="7" refX="10" refY="3.5" orient="auto">
+            <polygon points="0 0, 10 3.5, 0 7" fill="#0288d1"/>
+        </marker>
+    </defs>
+</svg>
