@@ -379,7 +379,10 @@ class BaseRunner(object):
         elif isinstance(self.model, nn.Module):
             assert osp.isfile(path)
             state_dict = load_checkpoint(path)
-            copy_state_dict(state_dict["state_dict"], self.model)
+            if hasattr(self.model, "module"):
+                copy_state_dict(state_dict["state_dict"], self.model)
+            else:
+                copy_state_dict(state_dict["state_dict"], self.model, strip="module.")
 
         self._start_epoch = state_dict["epoch"]
         self._best_mAP = state_dict["best_mAP"]
