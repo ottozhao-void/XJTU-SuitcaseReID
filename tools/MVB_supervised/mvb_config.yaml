@@ -3,7 +3,7 @@ LOGS_ROOT: "/data1/zhaofanghan/SuitcaseReID/OpenUnReID/logs/"
 
 MODEL:
   # Architecture
-  backbone: "resnet152"
+  backbone: "resnet101"
   pooling: "gem" # Global average pooling works well for suitcase features
   embed_feat: 0 # Use the output of the backbone directly
   dropout: 0.3 # Added some dropout to prevent overfitting on small dataset
