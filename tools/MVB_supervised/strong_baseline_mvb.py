@@ -17,6 +17,7 @@ import os.path as osp
 
 import torch
 from torch.utils.tensorboard import SummaryWriter
+import wandb  # Import Weights & Biases
 
 from openunreid.apis import BaseRunner, test_reid, set_random_seed
 from openunreid.core.solvers import build_lr_scheduler, build_optimizer
@@ -86,6 +87,53 @@ def parse_config():
     return args, cfg
 
 
+class MVBBaseRunner(BaseRunner):
+    """
+    Extended BaseRunner with W&B logging capabilities
+    """
+    
+    def train_step(self, iter, batch):
+        """
+        Override the train_step method to add W&B logging
+        """
+        # Call the original train_step method
+        (total_loss, meters) = super().train_step(iter, batch)
+        
+        # Log metrics to W&B
+        rank, _, _ = get_dist_info()
+        if rank == 0 and iter % self.print_freq == 0:
+            # Log loss metrics
+            for k, v in meters.items():
+                wandb.log({f"train/{k}": v})
+            wandb.log({"train/loss": total_loss})
+            
+            # Log learning rate
+            wandb.log({f"train/lr": self.optimizer.param_groups[0]['lr']})
+
+        
+        return (total_loss, meters)
+    
+    def val(self):
+        """
+        Override the validation method to add W&B logging
+        """
+        # Call the original val method
+        results = super().val()
+        
+        # Log validation metrics to W&B if available
+        rank, _, _ = get_dist_info()
+        if rank == 0 and results is not None:
+            for (mAP, cmc) in [results]:
+                wandb.log({
+                    f"val/mAP": mAP,
+                    f"val/rank1": cmc[0],
+                    f"val/rank5": cmc[4],
+                    f"val/rank10": cmc[9]
+                })
+        
+        return results
+
+
 def main():
 
     # CUDA_VISIBLE_DEVICE=0,1,2,3 python -m torch.distributed.launch --nproc_per_node=4 /data1/zhaofanghan/OpenUnReID/tools/SuitcaseReID_supervised/strong_baseline_suitcase.py --config /data1/zhaofanghan/OpenUnReID/tools/SuitcaseReID_supervised/suitcase_config.yaml --launcher pytorch
@@ -118,6 +166,15 @@ def main():
     sys.stdout = logger
     print("==========\nArgs:{}\n==========".format(args))
     log_config_to_file(cfg)
+    
+    # Initialize W&B - only on the main process in distributed training
+    if rank == 0:
+        wandb.init(
+            project="Suitcase ReID",
+            name=str(cfg.work_dir).split("/")[-1],
+            config=cfg,
+        )
+        print("Weights & Biases initialized for project: Suitcase ReID")
     
     # Setup TensorBoard for visualization
     writer = None
@@ -171,7 +228,7 @@ def main():
     criterions = build_loss(cfg.TRAIN.LOSS, num_classes=num_classes, cuda=True)
 
     # Build runner
-    runner = BaseRunner(
+    runner = MVBBaseRunner(
         cfg,
         model,
         optimizer,
@@ -206,12 +263,26 @@ def main():
             cfg, model, loader, query, gallery, dataset_name=cfg.TEST.datasets[i]
         )
         
-        # Log results to TensorBoard
-        if writer is not None:
-            writer.add_scalar(f'Test/{cfg.TEST.datasets[i]}/mAP', mAP, 0)
-            for r in [1, 5, 10]:
-                if r < len(cmc):
-                    writer.add_scalar(f'Test/{cfg.TEST.datasets[i]}/Rank-{r}', cmc[r-1], 0)
+        # Log results to TensorBoard and W&B
+        if rank == 0:
+            # Log to TensorBoard
+            if writer is not None:
+                writer.add_scalar(f'Test/{cfg.TEST.datasets[i]}/mAP', mAP, 0)
+                for r in [1, 5, 10]:
+                    if r < len(cmc):
+                        writer.add_scalar(f'Test/{cfg.TEST.datasets[i]}/Rank-{r}', cmc[r-1], 0)
+            
+            # Log to W&B
+            wandb.log({
+                f'test/{cfg.TEST.datasets[i]}/mAP': mAP,
+                f'test/{cfg.TEST.datasets[i]}/rank1': cmc[0],
+                f'test/{cfg.TEST.datasets[i]}/rank5': cmc[4] if len(cmc) > 4 else None,
+                f'test/{cfg.TEST.datasets[i]}/rank10': cmc[9] if len(cmc) > 9 else None,
+            })
+            
+            # Save model artifact in W&B
+            if i == 0:  # Only save once
+                wandb.save(str(best_model_path))
 
     # Print time
     end_time = time.monotonic()

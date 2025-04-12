@@ -1,0 +1,137 @@
+_wandb:
+    value:
+        cli_version: 0.19.1
+        m: []
+        python_version: 3.9.21
+        t:
+            "1":
+                - 1
+                - 5
+                - 41
+                - 53
+                - 55
+            "2":
+                - 1
+                - 5
+                - 41
+                - 53
+                - 55
+            "3":
+                - 13
+                - 16
+                - 23
+                - 55
+            "4": 3.9.21
+            "5": 0.19.1
+            "8":
+                - 5
+            "12": 0.19.1
+            "13": linux-x86_64
+DATA:
+    value:
+        TRAIN:
+            blur_prob: 0.3
+            erase_prob: 0.7
+            flip_prob: 0.5
+            is_autoaug: true
+            is_blur: true
+            is_erase: true
+            is_flip: true
+            is_mutual_transform: false
+            is_pad: true
+            mutual_times: 1
+            pad_size: 10
+        height: 256
+        norm_mean:
+            - 0.485
+            - 0.456
+            - 0.406
+        norm_std:
+            - 0.229
+            - 0.224
+            - 0.225
+        width: 256
+DATA_ROOT:
+    value: /data1/zhaofanghan/SuitcaseReID/OpenUnReID/datasets
+LOCAL_RANK:
+    value: 0
+LOGS_ROOT:
+    value: /data1/zhaofanghan/SuitcaseReID/OpenUnReID/logs
+MODEL:
+    value:
+        alpha: 0.999
+        backbone: resnet50
+        dropout: 0.3
+        dsbn: false
+        embed_feat: 0
+        imagenet_pretrained: true
+        mean_net: false
+        pooling: gem
+        samples_per_bn: 16
+        source_pretrained: null
+        sync_bn: false
+TEST:
+    value:
+        LOADER:
+            samples_per_gpu: 64
+            workers_per_gpu: 4
+        datasets:
+            - suitcaseid
+        dist_cuda: true
+        dist_metric: euclidean
+        k1: 20
+        k2: 6
+        lambda_value: 0.3
+        norm_feat: true
+        rerank: true
+        search_type: 0
+TRAIN:
+    value:
+        LOADER:
+            samples_per_gpu: 32
+            workers_per_gpu: 4
+        LOSS:
+            losses:
+                cross_entropy: 1
+                softmax_triplet: 1
+            margin: 0.3
+        OPTIM:
+            lr: 0.0003
+            optim: adam
+            weight_decay: 0.0005
+        SAMPLER:
+            is_shuffle: true
+            num_instances: 4
+        SCHEDULER:
+            gamma: 0.1
+            lr_scheduler: cosine
+            stepsize:
+                - 30
+                - 60
+                - 90
+        amp: false
+        datasets:
+            suitcaseid: train
+        deterministic: true
+        epochs: 50
+        iters: 100
+        seed: 1
+        unsup_dataset_indexes: []
+        val_dataset: suitcaseid
+        val_freq: 5
+gpu:
+    value: 0
+launcher:
+    value: pytorch
+ngpus_per_node:
+    value: 4
+rank:
+    value: 0
+tcp_port:
+    value: "5017"
+total_gpus:
+    value: 4
+work_dir:
+    value: /data1/zhaofanghan/SuitcaseReID/OpenUnReID/logs/suitcase_supervised_roboflow_2025-04-12_12-19-58
+world_size:
+    value: 4

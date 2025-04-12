@@ -127,7 +127,7 @@ class BaseRunner(object):
                 ep + 1
             ) == self.cfg.TRAIN.epochs:
                 if "val_dataset" in self.cfg.TRAIN:
-                    mAP = self.val()
+                    (mAP, _) = self.val()
                     self.save(mAP)
                 else:
                     self.save()
@@ -213,7 +213,6 @@ class BaseRunner(object):
 
         end = time.time()
         for iter in range(self.cfg.TRAIN.iters):
-            # TODO: to verify the batch size
             if isinstance(self.train_loader, list):
                 batch = [loader.next() for loader in self.train_loader]
             else:
@@ -221,7 +220,7 @@ class BaseRunner(object):
             # self.train_progress.update({'Data': time.time()-end})
 
             if self.scaler is None:
-                loss = self.train_step(iter, batch)
+                (loss, _) = self.train_step(iter, batch)
                 if (loss > 0):
                     self.optimizer.zero_grad()
                     loss.backward()
@@ -279,7 +278,7 @@ class BaseRunner(object):
 
         self.train_progress.update(meters)
 
-        return total_loss
+        return (total_loss, meters)
 
     def val(self):
         if not isinstance(self.model, list):
@@ -288,6 +287,7 @@ class BaseRunner(object):
             model_list = self.model
 
         better_mAP = 0
+        # TODO: 改为多模型时考虑这里如何更改
         for idx in range(len(model_list)):
             if len(model_list) > 1:
                 print("==> Val on the no.{} model".format(idx))
@@ -303,7 +303,7 @@ class BaseRunner(object):
             )
             better_mAP = max(better_mAP, mAP)
 
-        return better_mAP
+        return (better_mAP, cmc)
 
     def save(self, mAP=None):
         if mAP is not None:

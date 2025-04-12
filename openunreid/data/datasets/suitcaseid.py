@@ -18,13 +18,13 @@ class SuitcaseReID(ImageDataset):
     A dataset for suitcase re-identification with labeled data.
     
     Dataset structure:
-    - MVB/
+    - SuitcaseReID_Processed/
         - bounding_box_train/
         - bounding_box_test/
         - query/
     """
 
-    dataset_dir = "MVB"
+    dataset_dir = "SuitcaseReID_Processed"
 
     def __init__(self, root, mode, val_split=0.2, del_labels=False, pseudo_labels=None, **kwargs):
         self.root = osp.abspath(osp.expanduser(root))
@@ -93,7 +93,7 @@ class SuitcaseReID(ImageDataset):
         market_pattern = re.compile(r'([-\d]+)_')
         
         # 2. For filenames like "0010_p_3_0.jpg" (SuitcaseReID style)
-        suitcase_pattern = re.compile(r'(\d+)_[pg]_(\d+)\.jpg')
+        suitcase_pattern = re.compile(r'(\d+)_p_(\d+)_\d+\.jpg')
         
         # Extract person IDs from filenames
         pid_container = set()

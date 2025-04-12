@@ -1,0 +1,1 @@
+{"train/loss":2.707489490509033,"train/softmax_triplet":1.2712527513504028,"train/Acc@1":0.875,"train/lr":0.0003,"_runtime":83.195273375,"_wandb":{"runtime":83},"_timestamp":1.7444329847072756e+09,"_step":90,"train/cross_entropy":1.4362366199493408}
