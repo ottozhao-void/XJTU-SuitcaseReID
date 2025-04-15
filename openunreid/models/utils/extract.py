@@ -18,7 +18,7 @@ def extract_features(
     cuda=True,  # extract on GPU
     normalize=True,  # normalize feature
     with_path=False,  # return a dict {path:feat} if True, otherwise, return only feat (Tensor)  # noqa
-    print_freq=10,  # log print frequence
+    print_freq=1,  # log print frequence
     save_memory=False,  # gather features from different GPUs all together or in sequence, only for distributed  # noqa
     for_testing=True,
     prefix="Extract: ",

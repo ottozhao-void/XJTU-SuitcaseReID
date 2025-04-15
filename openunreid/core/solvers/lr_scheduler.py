@@ -92,7 +92,7 @@ def build_lr_scheduler(
     elif lr_scheduler == "cosine":
         scheduler = torch.optim.lr_scheduler.CosineAnnealingLR(
             optimizer, float(max_epoch)
-        )
+        )   
 
     elif lr_scheduler == "linear":
         def lambda_rule(epoch):

@@ -142,7 +142,7 @@ def main():
     # Use torchrun instead of torch.distributed.launch, becuase it sets the local rank in environemt variable
     # not automatically inject --local_rank
     
-    # CUDA_VISIBLE_DEVICES=4,5,6,7 torchrun \
+    # CUDA_VISIBLE_DEVICES=5,3,4,6 torchrun \
     # --nproc_per_node=4 \
     # /data1/zhaofanghan/SuitcaseReID/OpenUnReID/tools/MVB_supervised/strong_baseline_mvb.py \
     # --config /data1/zhaofanghan/SuitcaseReID/OpenUnReID/tools/MVB_supervised/mvb_config.yaml \
@@ -171,7 +171,7 @@ def main():
     if rank == 0:
         wandb.init(
             project="Suitcase ReID",
-            name=str(cfg.work_dir).split("/")[-1],
+            name="MVB_" + str(cfg.work_dir).split("/")[-1],
             config=cfg,
         )
         print("Weights & Biases initialized for project: Suitcase ReID")
@@ -238,6 +238,10 @@ def main():
         lr_scheduler=lr_scheduler,
         reset_optim=True,
     )
+
+    # Watch model with W&B to track parameters and gradients
+    if rank == 0:
+        wandb.watch(model, log="all", log_freq=100)
 
     # Resume from checkpoint if specified
     if args.resume_from:
