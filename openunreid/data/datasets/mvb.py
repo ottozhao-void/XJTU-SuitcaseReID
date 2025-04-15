@@ -26,7 +26,7 @@ class MVB(ImageDataset):
 
     dataset_dir = "MVB"
 
-    def __init__(self, root, mode, val_split=0.2, del_labels=False, pseudo_labels=None, **kwargs):
+    def __init__(self, root, mode, val_split=0.1, del_labels=False, pseudo_labels=None, **kwargs):
         self.root = osp.abspath(osp.expanduser(root))
         self.dataset_dir = osp.join(self.root, self.dataset_dir)
         self.del_labels = del_labels
