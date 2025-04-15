@@ -142,11 +142,11 @@ def main():
     # Use torchrun instead of torch.distributed.launch, becuase it sets the local rank in environemt variable
     # not automatically inject --local_rank
     
-    # CUDA_VISIBLE_DEVICES=5,3,4,6 torchrun \
-    # --nproc_per_node=4 \
-    # /data1/zhaofanghan/SuitcaseReID/OpenUnReID/tools/MVB_supervised/strong_baseline_mvb.py \
-    # --config /data1/zhaofanghan/SuitcaseReID/OpenUnReID/tools/MVB_supervised/mvb_config.yaml \
-    # --launcher pytorch
+        # CUDA_VISIBLE_DEVICES=4,5,6,7 torchrun \
+        # --nproc_per_node=4 \
+        # /data1/zhaofanghan/SuitcaseReID/OpenUnReID/tools/MVB_supervised/strong_baseline_mvb.py \
+        # --config /data1/zhaofanghan/SuitcaseReID/OpenUnReID/tools/MVB_supervised/mvb_config.yaml \
+        # --launcher pytorch
 
     start_time = time.monotonic()
 
