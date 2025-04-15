@@ -84,10 +84,9 @@ TRAIN:
 
   SCHEDULER:
     lr_scheduler: "cosine" # Using cosine scheduler for better convergence
-    gamma: 0.1
+    gamma: 0.0001
     stepsize: [30, 60, 90]
     max_epoch: 100 # More epochs for better convergence
-    eta_min: 0.0001
 
 TEST:
   # Datasets
