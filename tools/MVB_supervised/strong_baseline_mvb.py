@@ -146,7 +146,8 @@ def main():
     # --nproc_per_node=4 \
     # /data1/zhaofanghan/SuitcaseReID/OpenUnReID/tools/MVB_supervised/strong_baseline_mvb.py \
     # --config /data1/zhaofanghan/SuitcaseReID/OpenUnReID/tools/MVB_supervised/mvb_config.yaml \
-    # --launcher pytorch
+    # --launcher pytorch \
+    # --resume-from /data1/zhaofanghan/SuitcaseReID/OpenUnReID/logs/suitcase_supervised_mvb_2025-04-15_18-27-22/checkpoint.pth
 
     start_time = time.monotonic()
 
@@ -254,8 +255,13 @@ def main():
 
     # Load the best model
     best_model_path = cfg.work_dir / "model_best.pth"
-    print(f"Loading best model from {best_model_path}")
-    runner.resume(best_model_path)
+    print(f"Checking for best model at {best_model_path}")
+    
+    if osp.isfile(best_model_path):
+        print(f"Loading best model from {best_model_path}")
+        runner.resume(best_model_path)
+    else:
+        print(f"Warning: Best model file not found at {best_model_path}. Using current model state for evaluation.")
 
     # Final testing
     print("Evaluating on SuitcaseReID test set...")

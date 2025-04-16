@@ -386,7 +386,7 @@ class BaseRunner(object):
 
         self._start_epoch = state_dict["epoch"]
         self._best_mAP = state_dict["best_mAP"]
-
+        
     @property
     def epoch(self):
         """int: Current epoch."""

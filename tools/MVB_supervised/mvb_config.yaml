@@ -55,7 +55,7 @@ TRAIN:
   datasets: { "mvb": "train" }
   unsup_dataset_indexes: [] # Supervised training, so no unsupervised datasets
 
-  epochs: 100 # More epochs for smaller dataset
+  epochs: 200 # More epochs for smaller dataset
   iters: 200 # Fewer iterations per epoch for smaller dataset
 
   LOSS:
@@ -79,12 +79,12 @@ TRAIN:
   # Optimizer
   OPTIM:
     optim: "adam"
-    lr: 0.0005
+    lr: 0.00005
     weight_decay: 0.0005
 
   SCHEDULER:
     lr_scheduler: "cosine" # Using cosine scheduler for better convergence
-    gamma: 0.00005
+    gamma: 0.00001
     stepsize: [30, 60, 90]
     max_epoch: 100 # More epochs for better convergence
 
