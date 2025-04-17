@@ -10,14 +10,14 @@ MODEL:
 
   dsbn: False # Single-source training, so no domain-specific batch norm needed
   sync_bn: True
-  samples_per_bn: 16
+  samples_per_bn: 32
 
   mean_net: False
   alpha: 0.999
 
   # Pretraining
   imagenet_pretrained: True
-  source_pretrained: null
+  source_pretrained: /data1/zhaofanghan/SuitcaseReID/OpenUnReID/logs/suitcase_supervised_mvb_2025-04-17_00-02-31/model_best.pth
 
 DATA:
   height: 256
@@ -55,12 +55,12 @@ TRAIN:
   datasets: { "mvb": "train" }
   unsup_dataset_indexes: [] # Supervised training, so no unsupervised datasets
 
-  epochs: 200 # More epochs for smaller dataset
+  epochs: 100 # More epochs for smaller dataset
   iters: 200 # Fewer iterations per epoch for smaller dataset
 
   LOSS:
     losses: { "cross_entropy": 1., "softmax_triplet": 1. }
-    margin: 0.3 # Added margin to triplet loss for better separation
+    margin: 0.5 # Added margin to triplet loss for better separation
 
   # Validate
   val_dataset: "mvb"
@@ -79,12 +79,12 @@ TRAIN:
   # Optimizer
   OPTIM:
     optim: "adam"
-    lr: 0.00005
+    lr: 0.0005
     weight_decay: 0.0005
 
   SCHEDULER:
     lr_scheduler: "cosine" # Using cosine scheduler for better convergence
-    gamma: 0.00001
+    gamma: 0.00005
     stepsize: [30, 60, 90]
     max_epoch: 100 # More epochs for better convergence
 
