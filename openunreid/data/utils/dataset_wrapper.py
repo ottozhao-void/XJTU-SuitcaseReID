@@ -92,5 +92,6 @@ class IterLoader:
         try:
             return next(self.iter)
         except Exception:
+            # print(f"{bcolors.WARNING}{'='*50}\n==> RESTARTING DATALOADER ITERATOR <==\n{'='*50}{bcolors.ENDC}")
             self.iter = iter(self.loader)
             return next(self.iter)

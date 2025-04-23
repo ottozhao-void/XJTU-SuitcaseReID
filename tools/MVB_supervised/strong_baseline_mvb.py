@@ -147,10 +147,8 @@ def main():
     # /data1/zhaofanghan/SuitcaseReID/OpenUnReID/tools/MVB_supervised/strong_baseline_mvb.py \
     # --config /data1/zhaofanghan/SuitcaseReID/OpenUnReID/tools/MVB_supervised/mvb_config.yaml \
     # --launcher pytorch \
-    
-    
-    # --resume-from /data1/zhaofanghan/SuitcaseReID/OpenUnReID/logs/suitcase_supervised_mvb_2025-04-15_18-27-22/checkpoint.pth
-
+    # --resume-from /data1/zhaofanghan/SuitcaseReID/OpenUnReID/logs/suitcase_supervised_mvb_2025-04-22_23-15-04/model_best.pth
+    torch.autograd.set_detect_anomaly(True)
     start_time = time.monotonic()
 
     # Init configuration

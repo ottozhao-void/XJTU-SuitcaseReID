@@ -9,15 +9,15 @@ MODEL:
   dropout: 0.3 # Added some dropout to prevent overfitting on small dataset
 
   dsbn: False # Single-source training, so no domain-specific batch norm needed
-  sync_bn: True
-  samples_per_bn: 32
+  sync_bn: False
+  samples_per_bn: 16
 
   mean_net: False
   alpha: 0.999
 
   # Pretraining
   imagenet_pretrained: True
-  source_pretrained: /data1/zhaofanghan/SuitcaseReID/OpenUnReID/logs/suitcase_supervised_mvb_2025-04-17_00-02-31/model_best.pth
+  source_pretrained: null
 
 DATA:
   height: 256
@@ -59,7 +59,7 @@ TRAIN:
   iters: 200 # Fewer iterations per epoch for smaller dataset
 
   LOSS:
-    losses: { "cross_entropy": 1., "softmax_triplet": 1. }
+    losses: { "cross_entropy": 1., "triplet": 1. }
     margin: 0.3 # Added margin to triplet loss for better separation
 
   # Validate
@@ -68,7 +68,7 @@ TRAIN:
 
   # Sampler
   SAMPLER:
-    num_instances: 4 # Sample 4 instances per ID
+    num_instances: 5 # Sample 4 instances per ID
     is_shuffle: True
 
   # Data loader
@@ -79,14 +79,14 @@ TRAIN:
   # Optimizer
   OPTIM:
     optim: "adam"
-    lr: 0.0005
+    lr: 0.00003
     weight_decay: 0.0005
 
   SCHEDULER:
     lr_scheduler: "cosine" # Using cosine scheduler for better convergence
-    gamma: 0.00005
+    gamma: 0.000005
     stepsize: [30, 60, 90]
-    max_epoch: 100 # More epochs for better convergence
+    max_epoch: 200 # More epochs for better convergence
 
 TEST:
   # Datasets
