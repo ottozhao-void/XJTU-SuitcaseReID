@@ -1,0 +1,29 @@
+program: /data1/zhaofanghan/SuitcaseReID/OpenUnReID/tools/MVB_supervised/strong_baseline_mvb.py
+project: Suitcase ReID
+name: lr_gamma_sweep
+method: bayes
+metric:
+  name: val/mAP
+  goal: maximize
+
+parameters:
+  TRAIN.OPTIM.lr:
+    distribution: uniform
+    min: 0.0001
+    max: 0.0004
+  
+  TRAIN.SCHEDULER.gamma:
+    distribution: uniform
+    min: 0.00001
+    max: 0.00004
+
+command:
+  - torchrun
+  - --nproc_per_node=4
+  - ${program}
+  - --config
+  - /data1/zhaofanghan/SuitcaseReID/OpenUnReID/tools/MVB_supervised/mvb_config.yaml
+  - --launcher
+  - pytorch
+  - --set
+  - ${args_no_hyphens}

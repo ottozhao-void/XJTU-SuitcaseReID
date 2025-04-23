@@ -17,6 +17,17 @@ def log_config_to_file(cfg, pre="cfg"):
 
 def cfg_from_list(cfg_list, config):
     """Set config keys via list (e.g., from command line)."""
+    # Convert list items containing equals sign into separate key-value pairs
+    if any('=' in item for item in cfg_list):
+        new_cfg_list = []
+        for item in cfg_list:
+            if '=' in item:
+                key, value = item.split('=')
+                new_cfg_list.extend([key, value])
+            else:
+                new_cfg_list.append(item)
+        cfg_list = new_cfg_list
+        
     from ast import literal_eval
 
     assert len(cfg_list) % 2 == 0
