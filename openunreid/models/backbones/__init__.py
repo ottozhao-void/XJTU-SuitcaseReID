@@ -1,4 +1,4 @@
-from .resnet import resnet18, resnet34, resnet50, resnet101, resnet152
+from .resnet import resnet18, resnet34, resnet50, resnet101, resnet152, resnet101_with_mask
 from .resnet_ibn_a import resnet50_ibn_a, resnet101_ibn_a
 from .generator import *
 from .discriminator import *
@@ -12,6 +12,7 @@ __factory = {
     "resnet50": resnet50,
     "resnet101": resnet101,
     "resnet152": resnet152,
+    "resnet101_with_mask": resnet101_with_mask,
     "resnet50_ibn_a": resnet50_ibn_a,
     "resnet101_ibn_a": resnet101_ibn_a,
     "resnet_6blocks": resnet_6blocks,

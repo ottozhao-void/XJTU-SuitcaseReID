@@ -1,1 +1,1 @@
-CUDA_VISIBLE_DEVICES=4,5,6,7 wandb agent 'ottozhao-xjtu/Suitcase ReID/uegt1gyn'
+CUDA_VISIBLE_DEVICES=4,5,6,7 wandb agent 'ottozhao-xjtu/Suitcase ReID/t6ra3aqy'

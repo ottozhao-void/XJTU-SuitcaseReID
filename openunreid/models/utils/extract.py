@@ -44,13 +44,26 @@ def extract_features(
         # compute output
         outputs = model(images)
 
+        # unify outputs to a feature tensor or list of tensors
+        # some models (e.g., with mask) return (feat, mask) during eval
+        if isinstance(outputs, tuple):
+            outputs = outputs[0]
+        # some models may return a dict
+        if isinstance(outputs, dict):
+            if "feat" in outputs:
+                outputs = outputs["feat"]
+            elif "pooling" in outputs:
+                outputs = outputs["pooling"]
+
         if isinstance(outputs, list) and for_testing:
             outputs = torch.cat(outputs, dim=1)
 
         if normalize:
             if isinstance(outputs, list):
                 outputs = [F.normalize(out, p=2, dim=-1) for out in outputs]
-            outputs = F.normalize(outputs, p=2, dim=-1)
+                # keep as list for now; will be concatenated below
+            else:
+                outputs = F.normalize(outputs, p=2, dim=-1)
 
         if isinstance(outputs, list):
             outputs = torch.cat(outputs, dim=1).data.cpu()

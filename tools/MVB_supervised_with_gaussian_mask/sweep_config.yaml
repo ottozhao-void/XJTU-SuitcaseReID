@@ -1,0 +1,39 @@
+program: /data1/zhaofanghan/SuitcaseReID/OpenUnReID/tools/MVB_supervised_with_gaussian_mask/strong_baseline_mvb_with_gaussian.py
+project: Suitcase-ReID-Gaussian-Mask
+name: init_sweep_for_rough_optimal_range
+description: 尝试找出一个大致的最优超参数范围
+method: bayes
+metric:
+  name: val/mAP
+  goal: maximize
+
+parameters:
+  TRAIN.OPTIM.lr:
+    distribution: uniform
+    min: 0.0001
+    max: 0.0005
+  
+  TRAIN.SCHEDULER.gamma:
+    distribution: uniform
+    min: 0.00001
+    max: 0.00006
+  TRAIN.LOSS.losses.gaussian_mask_regression:
+    distribution: uniform
+    min: 0.01
+    max: 0.05
+  TRAIN.LOSS.mask_threshold:
+    distribution: uniform
+    min: 0.005
+    max: 0.015
+
+
+command:
+  - torchrun
+  - --nproc_per_node=3
+  - ${program}
+  - --config
+  - /data1/zhaofanghan/SuitcaseReID/OpenUnReID/tools/MVB_supervised_with_gaussian_mask/mvb_config.yaml
+  - --launcher
+  - pytorch
+  - --set
+  - ${args_no_hyphens}

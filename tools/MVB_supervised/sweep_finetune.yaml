@@ -1,7 +1,7 @@
 program: /data1/zhaofanghan/SuitcaseReID/OpenUnReID/tools/MVB_supervised/strong_baseline_mvb.py
 project: Suitcase ReID
-name: lr_gamma_sweep_softmax_triplet
-description: Sweep with softmax_triplet
+name: lr_gamma_sweep_finetune
+description: Sweep for finetuning with different learning rates and gamma values
 method: bayes
 metric:
   name: val/mAP
@@ -10,13 +10,13 @@ metric:
 parameters:
   TRAIN.OPTIM.lr:
     distribution: uniform
-    min: 0.00009
-    max: 0.0002
+    min: 8e-06
+    max: 2e-05
   
   TRAIN.SCHEDULER.gamma:
     distribution: uniform
-    min: 0.00001
-    max: 0.00004
+    min: 3e-06
+    max: 5e-06
 
 command:
   - torchrun

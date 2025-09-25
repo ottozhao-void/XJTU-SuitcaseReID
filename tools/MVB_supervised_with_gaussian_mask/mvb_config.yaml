@@ -3,7 +3,7 @@ LOGS_ROOT: "/data1/zhaofanghan/SuitcaseReID/OpenUnReID/logs/"
 
 MODEL:
   # Architecture
-  backbone: "resnet101"
+  backbone: "resnet101_with_mask"  # Use ResNet101 with mask generation capability
   pooling: "gem" # Global average pooling works well for suitcase features
   embed_feat: 0 # Use the output of the backbone directly
   dropout: 0.3 # Added some dropout to prevent overfitting on small dataset
@@ -18,6 +18,10 @@ MODEL:
   # Pretraining
   imagenet_pretrained: True
   source_pretrained: null
+
+  # Mask generation settings
+  mask_enabled: True
+  mask_output_size: [256, 256]
 
 DATA:
   height: 256
@@ -59,12 +63,18 @@ TRAIN:
   iters: 200 # Fewer iterations per epoch for smaller dataset
 
   LOSS:
-    losses: { "cross_entropy": 1., "softmax_triplet": 1. }
+    losses: { "cross_entropy": 1., "softmax_triplet": 1., "gaussian_mask_regression": 0.05 }
     margin: 0.3 # Added margin to triplet loss for better separation
+    
+    # Mask loss settings
+    mask_loss_type: "mse"  # Options: mse, l1, smooth_l1
+    sigma_ratio: 0.1  # Gaussian sigma as ratio of bbox size
+    mask_weight: 0.5  # Weight for mask regression loss
+    mask_threshold: 0.1  # Threshold for mask loss - only pixels above this value contribute to loss
 
   # Validate
   val_dataset: "mvb"
-  val_freq: 5
+  val_freq: 10
 
   # Sampler
   SAMPLER:
@@ -74,7 +84,7 @@ TRAIN:
   # Data loader
   LOADER:
     samples_per_gpu: 32 # Increased batch size for faster training
-    workers_per_gpu: 4 # More workers for faster data loading
+    workers_per_gpu: 2 # More workers for faster data loading
 
   # Optimizer
   OPTIM:
@@ -94,8 +104,8 @@ TEST:
 
   # Data loader
   LOADER:
-    samples_per_gpu: 64
-    workers_per_gpu: 4
+    samples_per_gpu: 32
+    workers_per_gpu: 2
 
   # Ranking setting
   dist_metric: "euclidean"
