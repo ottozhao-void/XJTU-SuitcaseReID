@@ -54,10 +54,10 @@ def get_dist_info():
 
 def init_dist_pytorch(args, backend="nccl"):
     # Set environment variables for NCCL stability and timeout
-    os.environ.setdefault("NCCL_TIMEOUT", "300")  # 5 minutes instead of 10
-    os.environ.setdefault("NCCL_BLOCKING_WAIT", "1")
-    os.environ.setdefault("NCCL_DEBUG", "WARN")
-    os.environ.setdefault("TORCH_NCCL_TRACE_BUFFER_SIZE", "1000000")  # Enable flight recorder
+    # os.environ.setdefault("NCCL_TIMEOUT", "300")  # 5 minutes instead of 10
+    # os.environ.setdefault("NCCL_BLOCKING_WAIT", "1")
+    # os.environ.setdefault("NCCL_DEBUG", "WARN")
+    # os.environ.setdefault("TORCH_NCCL_TRACE_BUFFER_SIZE", "1000000")  # Enable flight recorder
     
     args.rank = int(os.environ["LOCAL_RANK"])
     if 'CUDA_VISIBLE_DEVICES' in os.environ.keys():
@@ -70,12 +70,14 @@ def init_dist_pytorch(args, backend="nccl"):
     
     # Initialize process group without deprecated device_id parameter
     # Use timeout to prevent hanging
-    timeout = torch.distributed.distributed_c10d.timedelta(minutes=10)
-    dist.init_process_group(
-        backend=backend, 
-        init_method='env://', 
-        timeout=timeout
-    )
+    # timeout = torch.distributed.distributed_c10d.timedelta(minutes=10)
+    # dist.init_process_group(
+    #     backend=backend, 
+    #     init_method='env://', 
+    #     timeout=timeout
+    # )
+    dist.init_process_group(backend=backend, init_method='env://', device_id=torch.device(args.gpu))
+    
     args.total_gpus = dist.get_world_size()
     args.world_size = args.total_gpus
 
