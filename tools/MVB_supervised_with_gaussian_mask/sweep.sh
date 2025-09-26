@@ -1,1 +1,1 @@
-PYTHONPATH=/data1/zhaofanghan/SuitcaseReID/OpenUnReID CUDA_VISIBLE_DEVICES=3,4,5 wandb agent ottozhao-xjtu/Suitcase-ReID-Gaussian-Mask/zgc3wnb1
+PYTHONPATH=/data1/zhaofanghan/SuitcaseReID/OpenUnReID CUDA_VISIBLE_DEVICES=3,4,5,7 wandb agent ottozhao-xjtu/Suitcase-ReID-Gaussian-Mask/weul5ao0

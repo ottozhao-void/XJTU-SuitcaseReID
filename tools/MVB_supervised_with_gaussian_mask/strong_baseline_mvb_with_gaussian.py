@@ -261,11 +261,14 @@ def main():
 
     # Set environment variables for NCCL stability BEFORE importing torch.distributed
     # os.environ.setdefault("NCCL_TIMEOUT", "1800")  # 30 minutes timeout
-    # os.environ.setdefault("NCCL_BLOCKING_WAIT", "1")
-    # os.environ.setdefault("NCCL_DEBUG", "INFO")  # More verbose for debugging
-    # os.environ.setdefault("TORCH_NCCL_TRACE_BUFFER_SIZE", "1000000")
     # os.environ.setdefault("NCCL_IB_DISABLE", "1")  # Disable InfiniBand if causing issues
     # os.environ.setdefault("NCCL_P2P_DISABLE", "1")  # Disable P2P if causing issues
+    
+    os.environ.setdefault("NCCL_BLOCKING_WAIT", "1")
+    os.environ.setdefault("NCCL_DEBUG", "INFO")  # More verbose for debugging
+    os.environ.setdefault("TORCH_NCCL_TRACE_BUFFER_SIZE", "1000000")
+    os.environ.setdefault("NCCL_DEBUG_SUBSYS", "COLL")
+    os.environ.setdefault("TORCH_NCCL_ASYNC_ERROR_HANDLING", "1")
 
     # CUDA_VISIBLE_DEVICE=0,1,2,3 python -m torch.distributed.launch --nproc_per_node=4 /data1/zhaofanghan/OpenUnReID/tools/SuitcaseReID_supervised/strong_baseline_suitcase.py --config /data1/zhaofanghan/OpenUnReID/tools/SuitcaseReID_supervised/suitcase_config.yaml --launcher pytorch
     

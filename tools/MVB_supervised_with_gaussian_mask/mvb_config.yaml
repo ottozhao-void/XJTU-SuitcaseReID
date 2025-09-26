@@ -84,7 +84,7 @@ TRAIN:
   # Data loader
   LOADER:
     samples_per_gpu: 32 # Increased batch size for faster training
-    workers_per_gpu: 2 # More workers for faster data loading
+    workers_per_gpu: 4 # More workers for faster data loading
 
   # Optimizer
   OPTIM:

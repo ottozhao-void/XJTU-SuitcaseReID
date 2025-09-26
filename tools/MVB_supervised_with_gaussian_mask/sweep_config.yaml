@@ -29,7 +29,7 @@ parameters:
 
 command:
   - torchrun
-  - --nproc_per_node=3
+  - --nproc_per_node=4
   - ${program}
   - --config
   - /data1/zhaofanghan/SuitcaseReID/OpenUnReID/tools/MVB_supervised_with_gaussian_mask/mvb_config.yaml
